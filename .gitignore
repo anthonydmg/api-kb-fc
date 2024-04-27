@@ -1,0 +1,13 @@
+# Ignorar el entorno virtual
+venv/
+env/
+*.pyc
+
+# Ignorar archivos de configuración local (por ejemplo, para Django)
+*.sqlite3
+*.env
+
+# Ignorar archivos de registro y archivos compilados
+*.log
+*.swp
+__pycache__/
