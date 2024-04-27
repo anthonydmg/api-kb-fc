@@ -11,6 +11,7 @@ def set_openai_key():
     API_KEY = os.getenv("API_KEY")
     openai.api_key = API_KEY
 
+
 set_openai_key()
 
 
