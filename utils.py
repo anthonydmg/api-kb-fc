@@ -4,8 +4,10 @@ from dotenv import load_dotenv
 import os
 import pandas as pd
 import ast
+import tiktoken
 
 load_dotenv(override=True)
+GPT_MODEL = "gpt-3.5-turbo"
 
 def set_openai_key():
     API_KEY = os.getenv("API_KEY")
@@ -14,6 +16,29 @@ def set_openai_key():
 
 set_openai_key()
 
+def count_num_tokens(text, model = GPT_MODEL):
+    encoding = tiktoken.encoding_for_model(model)
+    return len(encoding.encode(text))
+
+
+def join_docs(query, documents, token_budget):
+    instrucction = """Proporciona una respuesta concisa y significativa al siguiente mensaje del usuario, considerando el contexto del historial del diálogo en curso. Utiliza solo la información entre tres comillas invertidas para responder de manera informativa. Evita proporcionar datos no respaldados. Usa máximo 100 palabras."""
+        
+    mensaje_user = f"""Mensaje del usuario: {query}"""
+
+    information = ""
+
+    for doc in documents:
+        text = doc["content"]
+        #template_information = f"""\nInformacion: ```{information}```\n"""
+        template_information = f"\nInformación: ```{information + text}```\n"
+        prompt_response_to_query = instrucction + template_information + mensaje_user
+
+        if count_num_tokens(prompt_response_to_query, model=GPT_MODEL) > token_budget:
+            break
+
+        information += "\n"+ text
+    return information
 
 def strings_ranked_by_relatedness(
         query,
