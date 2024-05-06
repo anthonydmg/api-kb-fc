@@ -81,5 +81,5 @@ def strings_ranked_by_relatedness(
      
         strings_and_relatednesses.sort(key=lambda x: x[1], reverse=True)
         strings, relatednesses = zip(*strings_and_relatednesses)
-        info_texts = [{"text":text, "relatedness": relat} for text, relat in zip(strings[:top_n], relatednesses[:top_n])]
+        info_texts = [{"text": str(text), "relatedness": float(relat)} for text, relat in zip(strings[:top_n], relatednesses[:top_n])]
         return info_texts

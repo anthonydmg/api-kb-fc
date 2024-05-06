@@ -14,13 +14,16 @@ class Item(BaseModel):
 class Message(BaseModel):
     content: str = None
     token_budget: int = 2500
+    context: str = None
 
 class Document(BaseModel):
-    content: str = None
+    text: str = None
     relatedness: float
+
 class Information(BaseModel):
-    content: str = None
-    docs: List[str] = None
+    content: str 
+    docs: List[Document]
+
 class CountTokens(BaseModel):
     num_tokens: int
 
@@ -39,12 +42,16 @@ def create_item(item: Item):
 @app.post("/retrieval_info/", response_model= Information)
 def retrieval_info(message: Message):
     print("message:", message.content)
-    documents = strings_ranked_by_relatedness(message.content)
+    documents = strings_ranked_by_relatedness( query = message.content, context = message.content)
 
     information = join_docs(message.content, documents, message.token_budget)
+    docs = [Document(text = doc["text"], relatedness = doc["relatedness"]) for doc in documents]
+    #print("documents:", docs)
+    
+    response = Information(content = information, docs = docs)
 
-    return {"content": information,
-            "docs:": documents}
+    #print("response:", response)
+    return response
 
 @app.post("/count_tokens/", response_model = CountTokens)
 def count_token(messages: List[Message]):
