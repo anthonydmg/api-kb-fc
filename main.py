@@ -20,6 +20,7 @@ class Document(BaseModel):
     relatedness: float
 class Information(BaseModel):
     content: str = None
+    docs: List[str] = None
 class CountTokens(BaseModel):
     num_tokens: int
 
@@ -42,7 +43,8 @@ def retrieval_info(message: Message):
 
     information = join_docs(message.content, documents, message.token_budget)
 
-    return {"content": information}
+    return {"content": information,
+            "docs:": documents}
 
 @app.post("/count_tokens/", response_model = CountTokens)
 def count_token(messages: List[Message]):
